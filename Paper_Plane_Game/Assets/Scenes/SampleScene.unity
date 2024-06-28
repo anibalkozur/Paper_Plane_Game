@@ -466,7 +466,8 @@ MonoBehaviour:
   maxX: 9
   minY: -5
   maxY: 5
-  rotationSpeed: 60
+  rotationSpeed: 80
+  maxRotationAngle: 45
 --- !u!1 &1953989807
 GameObject:
   m_ObjectHideFlags: 0
