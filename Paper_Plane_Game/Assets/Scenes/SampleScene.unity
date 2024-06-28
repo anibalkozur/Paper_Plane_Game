@@ -460,9 +460,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f336b9372a6c394a9a829eee5b02bce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 10
-  minX: -10
-  maxX: 10
+  speed: 4
+  fallSpeed: 0
+  minX: -9
+  maxX: 9
+  minY: -5
+  maxY: 5
+  rotationSpeed: 60
 --- !u!1 &1953989807
 GameObject:
   m_ObjectHideFlags: 0
