@@ -4,7 +4,7 @@
 PlayerSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 26
-  productGUID: 63f8700e2370ef346bd871757561e62f
+  productGUID: 77451953575ff364daec902dfe88eab4
   AndroidProfiler: 0
   AndroidFilterTouchesWhenObscured: 0
   AndroidEnableSustainedPerformanceMode: 0
@@ -671,10 +671,10 @@ PlayerSettings:
   apiCompatibilityLevel: 6
   activeInputHandler: 0
   windowsGamepadBackendHint: 0
-  cloudProjectId: 9aad543e-56f9-4163-bbef-fb44c8418be6
+  cloudProjectId: a649fe88-a41d-452c-be68-d0fa5f31b648
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
-  projectName: Paper_Plane_Game
+  projectName: Paper_Plane_Game 2024-06-27_22-07-36
   organizationId: kozuranibal
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 0
