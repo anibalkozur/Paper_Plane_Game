@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class PaperPlaneController : MonoBehaviour
 {
-    public float speed = 4f;
-    public float fallSpeed = 0.4f;
+    public float speed = 4f; // Velocidad inicial
+    public float fallSpeed = 0.2f; // Velocidad de caída inicial
     public float minX = -9f;
     public float maxX = 9f;
     public float minY = -5f;
@@ -15,6 +15,14 @@ public class PaperPlaneController : MonoBehaviour
     private int stop = 0;
     public float rotationSpeed = 60f;
     public float maxRotationAngle = 45f;
+    private float initialSpeed; // Para almacenar la velocidad inicial
+    public float maxSpeed = 8f; // Velocidad máxima permitida
+    private float maxFallSpeed = 2f; // Velocidad de caída máxima
+
+    void Start()
+    {
+        initialSpeed = speed; // Guardar la velocidad inicial
+    }
 
     void Update()
     {
@@ -38,20 +46,18 @@ public class PaperPlaneController : MonoBehaviour
             RotateSprite(direction);
         }
 
-        // Movimiento automático en el eje X según la dirección
-        float moveX = direction * speed * Time.deltaTime;
-        // Caída suave en el eje Y
-        float moveY = -fallSpeed * Time.deltaTime;
-        // Calcula la nueva posición en el eje X
-        float newXPosition = transform.position.x + moveX;
-        // Calcula la nueva posición en el eje Y
-        float newYPosition = transform.position.y + moveY;
-        // Aplica los límites a la nueva posición en el eje X
-        newXPosition = Mathf.Clamp(newXPosition, minX, maxX);
-        // Aplica el límite mínimo en el eje Y
-        newYPosition = Mathf.Clamp(newYPosition, minY, maxY);
-        // Actualiza la posición del avión en los ejes X y Y
-        transform.position = new Vector3(newXPosition, newYPosition, transform.position.z);
+        // Ajustar la velocidad de caída y la velocidad del avión según el ángulo de la nariz
+        AdjustSpeedAndFallSpeed();
+
+        // Movimiento basado en la dirección y el ángulo de la nariz
+        MovePlane();
+
+        // Aplica los límites a la nueva posición
+        transform.position = new Vector3(
+            Mathf.Clamp(transform.position.x, minX, maxX),
+            Mathf.Clamp(transform.position.y, minY, maxY),
+            transform.position.z);
+
         // Verifica si la dirección ha cambiado y ajusta la escala del transform para voltear el sprite
         if (direction != previousDirection)
         {
@@ -72,6 +78,78 @@ public class PaperPlaneController : MonoBehaviour
             // Actualiza la dirección anterior
             previousDirection = direction;
         }
+    }
+
+    // Método para ajustar la velocidad y la velocidad de caída
+    void AdjustSpeedAndFallSpeed()
+    {
+        float currentRotation = transform.rotation.eulerAngles.z;
+        currentRotation = NormalizeAngle(currentRotation);
+
+        // Considera la dirección para determinar la inclinación
+        if (direction == 1) // Movimiento a la derecha
+        {
+            if (currentRotation < 0)
+            {
+                // Nariz hacia abajo
+                speed = initialSpeed + Mathf.Abs(currentRotation) / maxRotationAngle * initialSpeed;
+            }
+            else if (currentRotation > 0)
+            {
+                // Nariz hacia arriba
+                speed = initialSpeed - currentRotation / maxRotationAngle * initialSpeed;
+                speed = Mathf.Max(speed, 0f);
+            }
+        }
+        else if (direction == -1) // Movimiento a la izquierda
+        {
+            if (currentRotation > 0)
+            {
+                // Nariz hacia abajo (pero hacia la izquierda)
+                speed = initialSpeed + Mathf.Abs(currentRotation) / maxRotationAngle * initialSpeed;
+            }
+            else if (currentRotation < 0)
+            {
+                // Nariz hacia arriba (pero hacia la izquierda)
+                speed = initialSpeed - Mathf.Abs(currentRotation) / maxRotationAngle * initialSpeed;
+                speed = Mathf.Max(speed, 0f);
+            }
+        }
+
+        // Limitar la velocidad máxima
+        speed = Mathf.Clamp(speed, 0f, maxSpeed);
+
+        // Ajustar la velocidad de caída según la velocidad actual
+        if (speed < 2f)
+        {
+            fallSpeed = maxFallSpeed * (2f - speed) / 2f;
+        }
+        else
+        {
+            fallSpeed = 0.4f;
+        }
+    }
+
+    // Método para mover el avión en la dirección en la que apunta la nariz
+    void MovePlane()
+    {
+        // Calcula la dirección de movimiento en función del ángulo de inclinación
+        Vector3 moveDirection;
+        
+        if (direction == 1)
+        {
+            moveDirection = transform.right; // Derecha
+        }
+        else
+        {
+            moveDirection = -transform.right; // Izquierda
+        }
+
+        // Movimiento basado en la dirección y la velocidad
+        transform.position += moveDirection * speed * Time.deltaTime;
+
+        // Caída en el eje Y según la velocidad de caída ajustada
+        transform.position += Vector3.down * fallSpeed * Time.deltaTime;
     }
 
     // Método para rotar el sprite gradualmente con límites
@@ -114,4 +192,3 @@ public class PaperPlaneController : MonoBehaviour
         transform.rotation = Quaternion.Euler(0, 0, correctRotation);
     }
 }
-
